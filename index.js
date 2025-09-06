@@ -416,7 +416,7 @@ client.once('ready', async () => {
   setInterval(() => {
     const status = statuses[i];
     client.user.setActivity(status);
-
+    console.log(`[DEBUG] Changement de statut Discord :`, status);
     i = (i + 1) % statuses.length;
   }, 5000); // change toutes les 5 secondes
 });
