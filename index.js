@@ -354,10 +354,6 @@ client.on(Events.GuildMemberRemove, async (member) => {
 const TOKEN = process.env.DISCORD_TOKEN;
 const RECRUTEMENT_MESSAGE = process.env.RECRUTEMENT_MESSAGE;
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Serveur Express démarré sur le port ${process.env.PORT || 3000}`);
-});
-
 client.once('ready', async () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
   setBotTag(client.user.tag);
