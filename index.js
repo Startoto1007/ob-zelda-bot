@@ -575,4 +575,8 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Serveur Express démarré sur le port ${process.env.PORT || 3000}`);
+});
+
 client.login(TOKEN);
