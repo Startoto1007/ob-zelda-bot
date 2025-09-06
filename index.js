@@ -355,7 +355,6 @@ const RECRUTEMENT_MESSAGE = process.env.RECRUTEMENT_MESSAGE;
 
 client.once('ready', async () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
-  botTag = client.user.tag;
 
   // Ajoute le bouton "Démarrer le recrutement" au message de recrutement
   if (RECRUTEMENT_MESSAGE) {
