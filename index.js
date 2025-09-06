@@ -20,7 +20,7 @@ const client = new Client({
 Canvas.registerFont(path.join(__dirname, 'fonts/police-zelda.otf'), { family: 'Hylia' });
 
 // --- Gestion des messages dans les salons de recrutement ---
-const censures = JSON.parse(fs.readFileSync(path.join(__dirname, 'mots-censurés.json'), 'utf8'));
+const censures = JSON.parse(fs.readFileSync(path.join(__dirname, 'mots-censures.json'), 'utf8'));
 const salonRecrutementCategory = '1412778819613360219';
 const userGrossierCount = new Map();
 
