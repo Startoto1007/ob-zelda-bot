@@ -3,6 +3,7 @@ const { Client, GatewayIntentBits, ActivityType, Events, EmbedBuilder, Attachmen
 const Canvas = require('canvas');
 const path = require('path');
 const fs = require('fs');
+const express = require('express');
 
 const client = new Client({
   intents: [
@@ -21,7 +22,7 @@ Canvas.registerFont(path.join(__dirname, 'fonts/police-zelda.otf'), { family: 'H
 
 // --- Gestion des messages dans les salons de recrutement ---
 const censures = JSON.parse(fs.readFileSync(path.join(__dirname, 'mots-censures.json'), 'utf8'));
-const salonRecrutementCategory = '1412778819613360219';
+const salonRecrutementCategory = '1413638464762675270';
 const userGrossierCount = new Map();
 
 client.on('messageCreate', async (message) => {
@@ -353,7 +354,22 @@ client.on(Events.GuildMemberRemove, async (member) => {
 const TOKEN = process.env.DISCORD_TOKEN;
 const RECRUTEMENT_MESSAGE = process.env.RECRUTEMENT_MESSAGE;
 
+let botTag = null;
+
+const app = express();
+app.get('/', (req, res) => {
+  if (botTag) {
+    res.send(`Bot connecté en tant que ${botTag}`);
+  } else {
+    res.send('Bot non connecté');
+  }
+});
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Serveur Express démarré sur le port', process.env.PORT || 3000);
+});
+
 client.once('ready', async () => {
+  botTag = client.user.tag;
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Ajoute le bouton "Démarrer le recrutement" au message de recrutement
@@ -363,17 +379,25 @@ client.once('ready', async () => {
       const [channelId, messageId] = RECRUTEMENT_MESSAGE.split('-');
       const channel = await client.channels.fetch(channelId);
       if (channel && channel.isTextBased()) {
-        const message = await channel.messages.fetch(messageId);
-        if (message) {
-          const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-          const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setCustomId('recrutement_start')
-              .setLabel('Démarrer le recrutement')
-              .setStyle(ButtonStyle.Primary)
-          );
-          // Répond au message de recrutement avec le bouton (si pas déjà fait)
-          await message.reply({ content: 'Clique ici pour démarrer le process de recrutement :', components: [row] });
+        // Vérifie que le dernier message du salon est envoyé par le bot
+        const messages = await channel.messages.fetch({ limit: 1 });
+        const lastMessage = messages.first();
+        if (lastMessage && lastMessage.author.id === client.user.id) {
+          // Si le dernier message est déjà du bot, ne rien faire
+          console.log('Le dernier message du salon est déjà envoyé par le bot, aucun bouton ajouté.');
+        } else {
+          // Sinon, envoyer le bouton sur le message de recrutement
+          const message = await channel.messages.fetch(messageId);
+          if (message) {
+            const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+            const row = new ActionRowBuilder().addComponents(
+              new ButtonBuilder()
+                .setCustomId('recrutement_start')
+                .setLabel('Démarrer le recrutement')
+                .setStyle(ButtonStyle.Primary)
+            );
+            await message.edit({ components: [row] });
+          }
         }
       }
     } catch (err) {
@@ -457,10 +481,10 @@ client.on('interactionCreate', async (interaction) => {
     if (!channelName || channelName.length > 20) channelName = user.username;
     channelName = `📪・${channelName}`;
 
-    // Crée le salon dans la catégorie 1412778819613360219
+    // Crée le salon dans la catégorie 1413638464762675270
     try {
       const guild = interaction.guild;
-      const categoryId = '1412778819613360219';
+      const categoryId = '1413638464762675270';
       // Permissions
       const { PermissionsBitField } = require('discord.js');
       const everyoneRole = guild.roles.everyone;
