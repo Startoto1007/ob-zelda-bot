@@ -21,7 +21,7 @@ Canvas.registerFont(path.join(__dirname, 'fonts/police-zelda.otf'), { family: 'H
 
 // --- Gestion des messages dans les salons de recrutement ---
 const censures = JSON.parse(fs.readFileSync(path.join(__dirname, 'mots-censures.json'), 'utf8'));
-const salonRecrutementCategory = '1412778819613360219';
+const salonRecrutementCategory = '1413638464762675270';
 const userGrossierCount = new Map();
 
 client.on('messageCreate', async (message) => {
