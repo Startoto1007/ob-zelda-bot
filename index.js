@@ -363,6 +363,13 @@ client.once('ready', async () => {
       const [channelId, messageId] = RECRUTEMENT_MESSAGE.split('-');
       const channel = await client.channels.fetch(channelId);
       if (channel && channel.isTextBased()) {
+        // Vérifie le dernier message du salon
+        const messages = await channel.messages.fetch({ limit: 1 });
+        const lastMessage = messages.first();
+        if (lastMessage && lastMessage.author.id === client.user.id) {
+          // Le dernier message est déjà du bot, ne pas renvoyer le bouton
+          return;
+        }
         const message = await channel.messages.fetch(messageId);
         if (message) {
           const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
@@ -457,10 +464,10 @@ client.on('interactionCreate', async (interaction) => {
     if (!channelName || channelName.length > 20) channelName = user.username;
     channelName = `📪・${channelName}`;
 
-    // Crée le salon dans la catégorie 1412778819613360219
+    // Crée le salon dans la catégorie 1413638464762675270
     try {
       const guild = interaction.guild;
-      const categoryId = '1412778819613360219';
+      const categoryId = '1413638464762675270';
       // Permissions
       const { PermissionsBitField } = require('discord.js');
       const everyoneRole = guild.roles.everyone;
