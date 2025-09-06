@@ -353,7 +353,7 @@ client.on(Events.GuildMemberRemove, async (member) => {
 const TOKEN = process.env.DISCORD_TOKEN;
 const RECRUTEMENT_MESSAGE = process.env.RECRUTEMENT_MESSAGE;
 
-client.on('ready', async () => {
+client.once('ready', async () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Ajoute le bouton "Démarrer le recrutement" au message de recrutement
