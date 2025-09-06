@@ -388,22 +388,25 @@ client.once('ready', async () => {
     }
   }
 
-  // Liste des statuts à alterner
-  const statuses = [
-    { name: "la grandeur de l'OB", type: ActivityType.Watching },
-    { name: "Hyping", type: ActivityType.Playing },
-    { name: "les ordres de flaviodab", type: ActivityType.Listening },
-    { name: "les vidéos de Minox", type: ActivityType.Watching },
-    { name: "Dev par Startoto", type: ActivityType.Custom, state: "Dev par Startoto" }
-  ];
-
-  let i = 0;
-  setInterval(() => {
-    const status = statuses[i];
-    client.user.setActivity(status);
-    console.log(`[DEBUG] Changement de statut Discord :`, status);
-    i = (i + 1) % statuses.length;
-  }, 5000); // change toutes les 5 secondes
+  let statusInterval;
+  function startStatusRotation() {
+    if (statusInterval) clearInterval(statusInterval);
+    const statuses = [
+      { name: "la grandeur de l'OB", type: ActivityType.Watching },
+      { name: "Hyping", type: ActivityType.Playing },
+      { name: "les ordres de flaviodab", type: ActivityType.Listening },
+      { name: "les vidéos de Minox", type: ActivityType.Watching },
+      { name: "Dev par Startoto", type: ActivityType.Custom, state: "Dev par Startoto" }
+    ];
+    let i = 0;
+    statusInterval = setInterval(() => {
+      const status = statuses[i];
+      client.user.setActivity(status);
+      console.log(`[DEBUG] Changement de statut Discord :`, status);
+      i = (i + 1) % statuses.length;
+    }, 5000);
+  }
+  startStatusRotation();
 });
 
 // Gestion des interactions pour le recrutement
@@ -569,6 +572,16 @@ client.on('interactionCreate', async (interaction) => {
     await interaction.update({ components: [row] });
     await interaction.channel.permissionOverwrites.edit(interaction.user.id, { SendMessages: true });
     await interaction.channel.send('Je repose ma question : Quel est ton pseudo Minecraft ?');
+    return;
+  }
+  // Commande !statut! (admin seulement)
+  if (interaction.customId === 'statut') {
+    if (!interaction.member.permissions.has('Administrator')) {
+      await interaction.reply('Tu dois être administrateur pour utiliser cette commande.');
+      return;
+    }
+    startStatusRotation();
+    await interaction.reply('Rotation du statut du bot relancée !');
     return;
   }
 });
