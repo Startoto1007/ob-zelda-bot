@@ -1,20 +1,33 @@
+// --- Express + Discord fusionné ---
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+let botTag = null;
+
+app.get('/', (req, res) => {
+  if (botTag) {
+    res.send(`Bot connecté en tant que ${botTag}`);
+  } else {
+    res.send('Bot non connecté');
+  }
+});
+
 require('dotenv').config();
 const { Client, GatewayIntentBits, ActivityType, Events, EmbedBuilder, AttachmentBuilder, REST, Routes, SlashCommandBuilder, InteractionType, ChannelType } = require("discord.js");
 const Canvas = require('canvas');
 const path = require('path');
 const fs = require('fs');
-const { app, setBotTag } = require('./server');
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers, // Ajout de l'intention pour recevoir les nouveaux membres
-    GatewayIntentBits.MessageContent, // Pour lire le contenu des messages
-    GatewayIntentBits.DirectMessages, // Pour recevoir les DM
-    GatewayIntentBits.GuildMessages, // Pour recevoir les messages dans les serveurs (nécessaire pour l'event messageCreate)
-    GatewayIntentBits.GuildMessageReactions // Pour recevoir les réactions dans les salons
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions
   ],
-  partials: ['CHANNEL', 'USER', 'MESSAGE', 'REACTION'] // Ajout de REACTION pour bien recevoir les réactions
+  partials: ['CHANNEL', 'USER', 'MESSAGE', 'REACTION']
 });
 
 // Charger la police Hylia (place le fichier Hylia.ttf dans /fonts à la racine du projet)
@@ -356,7 +369,7 @@ const RECRUTEMENT_MESSAGE = process.env.RECRUTEMENT_MESSAGE;
 
 client.once('ready', async () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
-  setBotTag(client.user.tag);
+  botTag = client.user.tag;
 
   // Ajoute le bouton "Démarrer le recrutement" au message de recrutement
   if (RECRUTEMENT_MESSAGE) {
@@ -575,8 +588,8 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Serveur Express démarré sur le port ${process.env.PORT || 3000}`);
+app.listen(port, () => {
+  console.log(`Serveur Express démarré sur le port ${port}`);
 });
 
 client.login(TOKEN);
