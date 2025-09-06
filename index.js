@@ -1,18 +1,3 @@
-// --- Express + Discord fusionné ---
-// Express supprimé pour test
-// const express = require('express');
-// const app = express();
-// const port = process.env.PORT || 3000;
-let botTag = null;
-
-// app.get('/', (req, res) => {
-//   if (botTag) {
-//     res.send(`Bot connecté en tant que ${botTag}`);
-//   } else {
-//     res.send('Bot non connecté');
-//   }
-// });
-
 require('dotenv').config();
 const { Client, GatewayIntentBits, ActivityType, Events, EmbedBuilder, AttachmentBuilder, REST, Routes, SlashCommandBuilder, InteractionType, ChannelType } = require("discord.js");
 const Canvas = require('canvas');
@@ -588,9 +573,5 @@ client.on('interactionCreate', async (interaction) => {
     return;
   }
 });
-
-// app.listen(port, () => {
-//   console.log(`Serveur Express démarré sur le port ${port}`);
-// });
 
 client.login(TOKEN);
